@@ -54,6 +54,8 @@ gem 'rubocop', '~> 0.49.1', require: false
 
 # Parsing
 gem 'mechanize', '2.7.5'
+gem 'watir', '6.8.1'
+gem 'webdrivers', '~> 3.0'
 
 group :development do
     gem 'capistrano', require: false
