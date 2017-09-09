@@ -20,8 +20,15 @@ class ScrapingService
         Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
         browser.button(class: 'button-ghost').click
 
-        puts "Users online - #{browser.elements(class: 'onlinee').size}"
-        puts "Can start chat with users - #{browser.elements(class: 'start-chat').size}"
+        browser.elements(class: 'contact-normal').each do |elem|
+            profile_id = elem.id.split('_')[-1]
+            Profile.create profile_id: profile_id, from_site: url
+        end
+
+        browser.elements(class: 'onlinee').each do |elem|
+            profile_id = elem.href.split('/')[-1].split('?')[0]
+            Profile.create profile_id: profile_id, from_site: url
+        end
     end
 
     private
