@@ -17,7 +17,7 @@ class ScrapingService
         browser.text_field(name: 'password').set password
         browser.button(value: 'login').click
 
-        Watir::Wait.until { !browser.elements(class: 'button-ghost').size.empty? }
+        Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
         browser.button(class: 'button-ghost').click
 
         puts "Users online - #{browser.elements(class: 'onlinee').size}"
