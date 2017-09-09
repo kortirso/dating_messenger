@@ -1,6 +1,6 @@
 FactoryGirl.define do
     factory :profile do
-        sequence(:profile_id) { |i| i.to_s }
+        profile_id 1
         from_site 'https://www.c-date.co.uk/'
     end
 end
