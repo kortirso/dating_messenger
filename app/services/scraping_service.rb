@@ -2,7 +2,7 @@ require 'watir'
 
 # service for scraping sites
 class ScrapingService
-    attr_reader :url, :email, :password
+    attr_reader :url, :email, :password, :browser
 
     def initialize(args = {})
         @url = args[:url]
@@ -11,7 +11,7 @@ class ScrapingService
     end
 
     def scrape
-        browser = Watir::Browser.start url
+        @browser = Watir::Browser.start url
         browser.link(text: /LOGIN/).click
         browser.text_field(name: 'email').set email
         browser.text_field(name: 'password').set password
@@ -32,6 +32,25 @@ class ScrapingService
     end
 
     private
+
+    def send_message
+        # click on user's link
+        # TODO: change it to real link's text
+        browser.link(text: 'EGDCFF83, 31').click
+
+        # wait send message button and click
+        Watir::Wait.until { !browser.elements(class: 'start-chat').empty? }
+        browser.elements(class: 'start-chat').first.click
+
+        # set message
+        browser.div(class: 'popup-send-message').textarea.set 'Hi, I want to chat with you'
+
+        # click for sending message
+        browser.elements(class: 'button-primary').last.click
+
+        # return to main page
+        browser.elements(class: 'ourLogo').first.click
+    end
 
     def save_to_file(from_scrape)
         filename = "#{Rails.root}/public/uploads/index.html"
