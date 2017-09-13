@@ -27,5 +27,8 @@ module DatingMessenger
         end
 
         config.generators.system_tests = nil
+
+        config.autoload_paths += %W[#{config.root}/app/jobs]
+        config.active_job.queue_adapter = :sidekiq
     end
 end

@@ -4,7 +4,7 @@ class ScrapeController < ApplicationController
     def index; end
 
     def create
-        ScrapingService.new(scrape_params).scrape
+        ScrapeServiceJob.perform_later(scrape_params)
     end
 
     private
