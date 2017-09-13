@@ -22,21 +22,30 @@ class ScrapingService
 
         browser.elements(class: 'contact-normal').each do |elem|
             profile_id = elem.id.split('_')[-1]
-            Profile.create profile_id: profile_id, from_site: url
+            find_profile(profile_id)
         end
 
         browser.elements(class: 'onlinee').each do |elem|
             profile_id = elem.href.split('/')[-1].split('?')[0]
-            Profile.create profile_id: profile_id, from_site: url
+            find_profile(profile_id)
         end
     end
 
     private
 
-    def send_message
-        # click on user's link
-        # TODO: change it to real link's text
-        browser.link(text: 'EGDCFF83, 31').click
+    def find_profile(profile_id)
+        profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
+        if profile.new_one?
+            send_message(profile_id)
+            profile.send_message
+        end
+    end
+
+    def send_message(profile_id, online = false)
+        # redirect to user profile
+        link = "#{url}/index.html#/profile/#{profile_id}"
+        link += '?from=Online' if online
+        browser.goto(link)
 
         # wait send message button and click
         Watir::Wait.until { !browser.elements(class: 'start-chat').empty? }
@@ -48,12 +57,7 @@ class ScrapingService
         # click for sending message
         browser.elements(class: 'button-primary').last.click
 
-        # return to main page
-        browser.elements(class: 'ourLogo').first.click
-    end
-
-    def save_to_file(from_scrape)
-        filename = "#{Rails.root}/public/uploads/index.html"
-        File.write(filename, from_scrape)
+        # wait for next request
+        sleep(5)
     end
 end
