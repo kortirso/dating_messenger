@@ -2,12 +2,13 @@ require 'watir'
 
 # service for scraping sites
 class ScrapingService
-    attr_reader :url, :email, :password, :browser
+    attr_reader :url, :email, :password, :message, :browser
 
     def initialize(args = {})
         @url = args[:url]
         @email = args[:email]
         @password = args[:password]
+        @message = args[:message]
     end
 
     def scrape
@@ -52,7 +53,7 @@ class ScrapingService
         browser.elements(class: 'start-chat').first.click
 
         # set message
-        browser.div(class: 'popup-send-message').textarea.set 'Hi, I want to chat with you'
+        browser.div(class: 'popup-send-message').textarea.set message
 
         # click for sending message
         browser.elements(class: 'button-primary').last.click

@@ -22,9 +22,13 @@ html, body {
         h1 {
             margin-bottom: 20px;
         }
-        input {
+        input, textarea {
             font-size: 14px;
             border-radius: 3px;
+        }
+        textarea {
+            height: 180px;
+            resize: none;
         }
     }
 }
