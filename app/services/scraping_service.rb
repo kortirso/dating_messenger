@@ -9,6 +9,7 @@ class ScrapingService
         @email = args[:email]
         @password = args[:password]
         @message = args[:message]
+        @profiles = []
     end
 
     def scrape
@@ -30,6 +31,10 @@ class ScrapingService
             profile_id = elem.href.split('/')[-1].split('?')[0]
             find_profile(profile_id)
         end
+
+        @profiles.each do |profile|
+            send_message(profile)
+        end
     end
 
     private
@@ -37,19 +42,19 @@ class ScrapingService
     def find_profile(profile_id)
         profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
         if profile.new_one?
-            send_message(profile_id)
             profile.send_message
+            @profiles.push(profile_id)
         end
     end
 
     def send_message(profile_id, online = false)
         # redirect to user profile
-        link = "#{url}/index.html#/profile/#{profile_id}"
+        link = "https://app2.c-date.com/index.html#/profile/#{profile_id}"
         link += '?from=Online' if online
         browser.goto(link)
 
         # wait send message button and click
-        Watir::Wait.until { !browser.elements(class: 'start-chat').empty? }
+        Watir::Wait.until { browser.div(class: 'state-profile').exists? }
         browser.elements(class: 'start-chat').first.click
 
         # set message
@@ -58,7 +63,10 @@ class ScrapingService
         # click for sending message
         browser.elements(class: 'button-primary').last.click
 
+        # browser.goto('https://app2.c-date.com/index.html#')
+        # Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
+
         # wait for next request
-        sleep(5)
+        # sleep(5)
     end
 end
