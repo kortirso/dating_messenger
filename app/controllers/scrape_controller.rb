@@ -10,6 +10,6 @@ class ScrapeController < ApplicationController
     private
 
     def scrape_params
-        params.permit(:url, :email, :password, :message).to_h
+        params.permit(:url, :inside_url, :email, :password, :message).to_h
     end
 end

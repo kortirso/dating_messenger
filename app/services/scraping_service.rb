@@ -2,10 +2,11 @@ require 'watir'
 
 # service for scraping sites
 class ScrapingService
-    attr_reader :url, :email, :password, :message, :browser
+    attr_reader :url, :inside_url, :email, :password, :message, :browser
 
     def initialize(args = {})
         @url = args[:url]
+        @inside_url = args[:inside_url]
         @email = args[:email]
         @password = args[:password]
         @message = args[:message]
@@ -49,7 +50,7 @@ class ScrapingService
 
     def send_message(profile_id, online = false)
         # redirect to user profile
-        link = "https://app2.c-date.com/index.html#/profile/#{profile_id}"
+        link = "#{inside_url}/profile/#{profile_id}"
         # link += '?from=Online' if online
         browser.goto(link)
 
