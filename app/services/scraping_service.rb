@@ -43,7 +43,6 @@ class ScrapingService
     def find_profile(profile_id)
         profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
         if profile.new_one?
-            profile.send_message
             @profiles.push(profile_id)
         end
     end
@@ -66,6 +65,9 @@ class ScrapingService
 
         # browser.goto('https://app2.c-date.com/index.html#')
         # Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
+
+        profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
+        profile.send_message
 
         # wait for next request
         sleep(3 + rand(3))
