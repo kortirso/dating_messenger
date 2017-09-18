@@ -43,14 +43,13 @@ class ScrapingService
     def find_profile(profile_id)
         profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
         if profile.new_one?
-            @profiles.push(profile_id)
+            @profiles.push(profile)
         end
     end
 
-    def send_message(profile_id, online = false)
+    def send_message(profile)
         # redirect to user profile
-        link = "#{inside_url}/profile/#{profile_id}"
-        # link += '?from=Online' if online
+        link = "#{inside_url}/profile/#{profile.profile_id}"
         browser.goto(link)
 
         # wait send message button and click
@@ -65,8 +64,6 @@ class ScrapingService
 
         # browser.goto('https://app2.c-date.com/index.html#')
         # Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
-
-        profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
         profile.send_message
 
         # wait for next request
