@@ -50,7 +50,7 @@ class ScrapingService
     def send_message(profile_id, online = false)
         # redirect to user profile
         link = "https://app2.c-date.com/index.html#/profile/#{profile_id}"
-        link += '?from=Online' if online
+        # link += '?from=Online' if online
         browser.goto(link)
 
         # wait send message button and click
@@ -67,6 +67,6 @@ class ScrapingService
         # Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
 
         # wait for next request
-        # sleep(5)
+        sleep(3 + rand(3))
     end
 end
