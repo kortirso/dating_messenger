@@ -11,7 +11,7 @@ class Task extends React.Component {
                 <td>{task.email}</td>
                 <td>{task.profiles_count}</td>
                 <td>{task.scrape_progress}</td>
-                <td>{task.status}</td>
+                <td>{task.current_status}</td>
             </tr>
         );
     }

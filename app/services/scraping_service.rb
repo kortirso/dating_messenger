@@ -35,9 +35,11 @@ class ScrapingService
             find_profile(profile_id)
         end
 
-        profiles.each do |profile|
+        profiles.sample(2).each do |profile|
             send_message(profile)
         end
+
+        task.complete
     end
 
     private
