@@ -16,9 +16,13 @@ html, body {
     padding: 0;
 }
 
+body {
+    padding: 20px 0;
+}
+
 #scrape {
     .block {
-        padding: 20px;
+        padding: 20px 0;
         h1 {
             margin-bottom: 20px;
         }
