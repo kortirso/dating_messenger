@@ -1,7 +1,12 @@
 # represents user profiles
 class Profile < ApplicationRecord
-    validates :profile_id, :from_site, presence: true
+    belongs_to :task
+
+    validates :profile_id, :from_site, :task_id, presence: true
     validates :profile_id, uniqueness: true
+
+    scope :scraped, -> { where(messaged: true) }
+    scope :unscraped, -> { where(messaged: false) }
 
     def new_one?
         !messaged?

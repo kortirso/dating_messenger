@@ -4,12 +4,12 @@ class ScrapeController < ApplicationController
     def index; end
 
     def create
-        ScrapeServiceJob.perform_later(scrape_params)
+        Task.create(scrape_params)
     end
 
     private
 
     def scrape_params
-        params.permit(:url, :inside_url, :email, :password, :message).to_h
+        params.permit(:url, :email, :password, :message)
     end
 end

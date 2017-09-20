@@ -2,38 +2,40 @@ require 'watir'
 
 # service for scraping sites
 class ScrapingService
-    attr_reader :url, :inside_url, :email, :password, :message, :browser
+    attr_reader :task, :browser, :profiles
 
     def initialize(args = {})
-        @url = args[:url]
-        @inside_url = args[:inside_url]
-        @email = args[:email]
-        @password = args[:password]
-        @message = args[:message]
+        @task = args[:task]
         @profiles = []
     end
 
     def scrape
-        @browser = Watir::Browser.start url
+        @browser = Watir::Browser.new :chrome, headless: true
+
+        # login
+        browser.goto(task.url)
         browser.link(text: /LOGIN/).click
-        browser.text_field(name: 'email').set email
-        browser.text_field(name: 'password').set password
+        browser.text_field(name: 'email').set task.email
+        browser.text_field(name: 'password').set task.password
         browser.button(value: 'login').click
 
+        # get all profiles
         Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
         browser.button(class: 'button-ghost').click
 
+        # select left side profiles
         browser.elements(class: 'contact-normal').each do |elem|
             profile_id = elem.id.split('_')[-1]
             find_profile(profile_id)
         end
 
+        # select right side profiles
         browser.elements(class: 'onlinee').each do |elem|
             profile_id = elem.href.split('/')[-1].split('?')[0]
             find_profile(profile_id)
         end
 
-        @profiles.each do |profile|
+        profiles.each do |profile|
             send_message(profile)
         end
     end
@@ -41,15 +43,16 @@ class ScrapingService
     private
 
     def find_profile(profile_id)
-        profile = Profile.find_or_create_by(profile_id: profile_id, from_site: url)
-        if profile.new_one?
-            @profiles.push(profile)
+        profile = Profile.find_by(profile_id: profile_id, from_site: task.url)
+        if profile.nil?
+            profile = Profile.create(profile_id: profile_id, from_site: task.url, task_id: task.id)
+            profiles.push(profile)
         end
     end
 
     def send_message(profile)
         # redirect to user profile
-        link = "#{inside_url}/profile/#{profile.profile_id}"
+        link = "https://app2.c-date.com/index.html#/profile/#{profile.profile_id}"
         browser.goto(link)
 
         # wait send message button and click
@@ -57,13 +60,12 @@ class ScrapingService
         browser.elements(class: 'start-chat').first.click
 
         # set message
-        browser.div(class: 'popup-send-message').textarea.set message
+        browser.div(class: 'popup-send-message').textarea.set task.message
 
         # click for sending message
         browser.elements(class: 'button-primary').last.click
 
-        # browser.goto('https://app2.c-date.com/index.html#')
-        # Watir::Wait.until { !browser.elements(class: 'button-ghost').empty? }
+        # update profile
         profile.send_message
 
         # wait for next request

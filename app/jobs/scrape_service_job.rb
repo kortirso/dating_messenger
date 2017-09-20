@@ -2,7 +2,7 @@
 class ScrapeServiceJob < ApplicationJob
     queue_as :default
 
-    def perform(scrape_params)
-        ScrapingService.new(scrape_params).scrape
+    def perform(task)
+        ScrapingService.new(task: task).scrape
     end
 end
