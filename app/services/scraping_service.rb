@@ -35,7 +35,7 @@ class ScrapingService
             find_profile(profile_id)
         end
 
-        profiles.sample(2).each do |profile|
+        profiles.each do |profile|
             send_message(profile)
         end
 
@@ -46,7 +46,7 @@ class ScrapingService
 
     def find_profile(profile_id)
         profile = Profile.find_by(profile_id: profile_id, from_site: task.url)
-        if profile.nil?
+        if profile.nil? || profile.new_one?
             profile = Profile.create(profile_id: profile_id, from_site: task.url, task_id: task.id)
             profiles.push(profile)
         end
